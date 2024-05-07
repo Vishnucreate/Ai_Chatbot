@@ -1,0 +1,2143 @@
+P (B)
+
+P (A ∨ B)
+
+P (H1 ) = 0.5 P (H1 ∨ H1 ) = 0.50
+P (H1 ) = 0.5 P (T1 ) = 0.5 P (H1 ∨ T1 ) = 1.00
+P (H2 ) = 0.5 P (H1 ∨ H2 ) = 0.75
+It gets worse when we chain evidence together. Truth-functional systems have rules of the
+form A %→ B that allow us to compute the belief in B as a function of the belief in the rule
+and the belief in A. Both forward- and backward-chaining systems can be devised. The belief
+in the rule is assumed to be constant and is usually specified by the knowledge engineer—for
+example, as A %→0.9 B.
+Consider the wet-grass situation from Figure 14.12(a) (page 529). If we wanted to be
+able to do both causal and diagnostic reasoning, we would need the two rules
+Rain %→ WetGrass
+
+and
+
+WetGrass %→ Rain .
+
+These two rules form a feedback loop: evidence for Rain increases the belief in WetGrass,
+which in turn increases the belief in Rain even more. Clearly, uncertain reasoning systems
+need to keep track of the paths along which evidence is propagated.
+Intercausal reasoning (or explaining away) is also tricky. Consider what happens when
+we have the two rules
+Sprinkler %→ WetGrass
+
+CERTAINTY FACTOR
+
+and
+
+WetGrass %→ Rain .
+
+Suppose we see that the sprinkler is on. Chaining forward through our rules, this increases the
+belief that the grass will be wet, which in turn increases the belief that it is raining. But this
+is ridiculous: the fact that the sprinkler is on explains away the wet grass and should reduce
+the belief in rain. A truth-functional system acts as if it also believes Sprinkler %→ Rain.
+Given these difficulties, how can truth-functional systems be made useful in practice?
+The answer lies in restricting the task and in carefully engineering the rule base so that undesirable interactions do not occur. The most famous example of a truth-functional system
+for uncertain reasoning is the certainty factors model, which was developed for the M YCIN
+medical diagnosis program and was widely used in expert systems of the late 1970s and
+1980s. Almost all uses of certainty factors involved rule sets that were either purely diagnostic (as in M YCIN ) or purely causal. Furthermore, evidence was entered only at the “roots”
+of the rule set, and most rule sets were singly connected. Heckerman (1986) has shown that,
+
+Section 14.7.
+
+Other Approaches to Uncertain Reasoning
+
+549
+
+under these circumstances, a minor variation on certainty-factor inference was exactly equivalent to Bayesian inference on polytrees. In other circumstances, certainty factors could yield
+disastrously incorrect degrees of belief through overcounting of evidence. As rule sets became larger, undesirable interactions between rules became more common, and practitioners
+found that the certainty factors of many other rules had to be “tweaked” when new rules were
+added. For these reasons, Bayesian networks have largely supplanted rule-based methods for
+uncertain reasoning.
+
+14.7.2 Representing ignorance: Dempster–Shafer theory
+DEMPSTER–SHAFER
+THEORY
+
+BELIEF FUNCTION
+
+MASS
+
+The Dempster–Shafer theory is designed to deal with the distinction between uncertainty
+and ignorance. Rather than computing the probability of a proposition, it computes the
+probability that the evidence supports the proposition. This measure of belief is called a
+belief function, written Bel(X).
+We return to coin flipping for an example of belief functions. Suppose you pick a
+coin from a magician’s pocket. Given that the coin might or might not be fair, what belief
+should you ascribe to the event that it comes up heads? Dempster–Shafer theory says that
+because you have no evidence either way, you have to say that the belief Bel (Heads) = 0
+and also that Bel (¬Heads) = 0. This makes Dempster–Shafer reasoning systems skeptical
+in a way that has some intuitive appeal. Now suppose you have an expert at your disposal
+who testifies with 90% certainty that the coin is fair (i.e., he is 90% sure that P (Heads) =
+0.5). Then Dempster–Shafer theory gives Bel(Heads) = 0.9 × 0.5 = 0.45 and likewise
+Bel(¬Heads) = 0.45. There is still a 10 percentage point “gap” that is not accounted for by
+the evidence.
+The mathematical underpinnings of Dempster–Shafer theory have a similar flavor to
+those of probability theory; the main difference is that, instead of assigning probabilities
+to possible worlds, the theory assigns masses to sets of possible world, that is, to events.
+The masses still must add to 1 over all possible events. Bel (A) is defined to be the sum of
+masses for all events that are subsets of (i.e., that entail) A, including A itself. With this
+definition, Bel(A) and Bel (¬A) sum to at most 1, and the gap—the interval between Bel(A)
+and 1 − Bel(¬A)—is often interpreted as bounding the probability of A.
+As with default reasoning, there is a problem in connecting beliefs to actions. Whenever
+there is a gap in the beliefs, then a decision problem can be defined such that a Dempster–
+Shafer system is unable to make a decision. In fact, the notion of utility in the Dempster–
+Shafer model is not yet well understood because the meanings of masses and beliefs themselves have yet to be understood. Pearl (1988) has argued that Bel (A) should be interpreted
+not as a degree of belief in A but as the probability assigned to all the possible worlds (now
+interpreted as logical theories) in which A is provable. While there are cases in which this
+quantity might be of interest, it is not the same as the probability that A is true.
+A Bayesian analysis of the coin-flipping example would suggest that no new formalism
+is necessary to handle such cases. The model would have two variables: the Bias of the coin
+(a number between 0 and 1, where 0 is a coin that always shows tails and 1 a coin that always
+shows heads) and the outcome of the next Flip. The prior probability distribution for Bias
+
+550
+
+Chapter 14.
+
+Probabilistic Reasoning
+
+would reflect our beliefs based on the source of the coin (the magician’s pocket): some small
+probability that it is fair and some probability that it is heavily biased toward heads or tails.
+The conditional distribution P(Flip | Bias) simply defines how the bias operates. If P(Bias)
+is symmetric about 0.5, then our prior probability for the flip is
+ 1
+P (Flip = heads) =
+P (Bias = x)P (Flip = heads | Bias = x) dx = 0.5 .
+0
+
+This is the same prediction as if we believe strongly that the coin is fair, but that does not
+mean that probability theory treats the two situations identically. The difference arises after
+the flips in computing the posterior distribution for Bias. If the coin came from a bank, then
+seeing it come up heads three times running would have almost no effect on our strong prior
+belief in its fairness; but if the coin comes from the magician’s pocket, the same evidence
+will lead to a stronger posterior belief that the coin is biased toward heads. Thus, a Bayesian
+approach expresses our “ignorance” in terms of how our beliefs would change in the face of
+future information gathering.
+
+14.7.3 Representing vagueness: Fuzzy sets and fuzzy logic
+FUZZY SET THEORY
+
+FUZZY LOGIC
+
+FUZZY CONTROL
+
+Fuzzy set theory is a means of specifying how well an object satisfies a vague description.
+For example, consider the proposition “Nate is tall.” Is this true if Nate is 5 10 ? Most
+people would hesitate to answer “true” or “false,” preferring to say, “sort of.” Note that this
+is not a question of uncertainty about the external world—we are sure of Nate’s height. The
+issue is that the linguistic term “tall” does not refer to a sharp demarcation of objects into two
+classes—there are degrees of tallness. For this reason, fuzzy set theory is not a method for
+uncertain reasoning at all. Rather, fuzzy set theory treats Tall as a fuzzy predicate and says
+that the truth value of Tall (Nate) is a number between 0 and 1, rather than being just true
+or false. The name “fuzzy set” derives from the interpretation of the predicate as implicitly
+defining a set of its members—a set that does not have sharp boundaries.
+Fuzzy logic is a method for reasoning with logical expressions describing membership
+in fuzzy sets. For example, the complex sentence Tall (Nate) ∧ Heavy(Nate) has a fuzzy
+truth value that is a function of the truth values of its components. The standard rules for
+evaluating the fuzzy truth, T , of a complex sentence are
+T (A ∧ B) = min(T (A), T (B))
+T (A ∨ B) = max(T (A), T (B))
+T (¬A) = 1 − T (A) .
+Fuzzy logic is therefore a truth-functional system—a fact that causes serious difficulties.
+For example, suppose that T (Tall (Nate)) = 0.6 and T (Heavy(Nate)) = 0.4. Then we have
+T (Tall (Nate) ∧ Heavy(Nate)) = 0.4, which seems reasonable, but we also get the result
+T (Tall (Nate) ∧ ¬Tall (Nate)) = 0.4, which does not. Clearly, the problem arises from the
+inability of a truth-functional approach to take into account the correlations or anticorrelations
+among the component propositions.
+Fuzzy control is a methodology for constructing control systems in which the mapping
+between real-valued input and output parameters is represented by fuzzy rules. Fuzzy control has been very successful in commercial products such as automatic transmissions, video
+
+Section 14.8.
+
+Summary
+
+551
+
+cameras, and electric shavers. Critics (see, e.g., Elkan, 1993) argue that these applications
+are successful because they have small rule bases, no chaining of inferences, and tunable
+parameters that can be adjusted to improve the system’s performance. The fact that they are
+implemented with fuzzy operators might be incidental to their success; the key is simply to
+provide a concise and intuitive way to specify a smoothly interpolated, real-valued function.
+There have been attempts to provide an explanation of fuzzy logic in terms of probability theory. One idea is to view assertions such as “Nate is Tall” as discrete observations made
+concerning a continuous hidden variable, Nate’s actual Height. The probability model specifies P (Observer says Nate is tall | Height), perhaps using a probit distribution as described
+on page 522. A posterior distribution over Nate’s height can then be calculated in the usual
+way, for example, if the model is part of a hybrid Bayesian network. Such an approach is not
+truth-functional, of course. For example, the conditional distribution
+P (Observer says Nate is tall and heavy | Height, Weight)
+
+RANDOM SET
+
+14.8
+
+allows for interactions between height and weight in the causing of the observation. Thus,
+someone who is eight feet tall and weighs 190 pounds is very unlikely to be called “tall and
+heavy,” even though “eight feet” counts as “tall” and “190 pounds” counts as “heavy.”
+Fuzzy predicates can also be given a probabilistic interpretation in terms of random
+sets—that is, random variables whose possible values are sets of objects. For example, Tall
+is a random set whose possible values are sets of people. The probability P (Tall = S1 ),
+where S1 is some particular set of people, is the probability that exactly that set would be
+identified as “tall” by an observer. Then the probability that “Nate is tall” is the sum of the
+probabilities of all the sets of which Nate is a member.
+Both the hybrid Bayesian network approach and the random sets approach appear to
+capture aspects of fuzziness without introducing degrees of truth. Nonetheless, there remain
+many open issues concerning the proper representation of linguistic observations and continuous quantities—issues that have been neglected by most outside the fuzzy community.
+
+S UMMARY
+This chapter has described Bayesian networks, a well-developed representation for uncertain
+knowledge. Bayesian networks play a role roughly analogous to that of propositional logic
+for definite knowledge.
+• A Bayesian network is a directed acyclic graph whose nodes correspond to random
+variables; each node has a conditional distribution for the node, given its parents.
+• Bayesian networks provide a concise way to represent conditional independence relationships in the domain.
+• A Bayesian network specifies a full joint distribution; each joint entry is defined as the
+product of the corresponding entries in the local conditional distributions. A Bayesian
+network is often exponentially smaller than an explicitly enumerated joint distribution.
+• Many conditional distributions can be represented compactly by canonical families of
+
+552
+
+Chapter 14.
+
+Probabilistic Reasoning
+
+distributions. Hybrid Bayesian networks, which include both discrete and continuous
+variables, use a variety of canonical distributions.
+• Inference in Bayesian networks means computing the probability distribution of a set
+of query variables, given a set of evidence variables. Exact inference algorithms, such
+as variable elimination, evaluate sums of products of conditional probabilities as efficiently as possible.
+• In polytrees (singly connected networks), exact inference takes time linear in the size
+of the network. In the general case, the problem is intractable.
+• Stochastic approximation techniques such as likelihood weighting and Markov chain
+Monte Carlo can give reasonable estimates of the true posterior probabilities in a network and can cope with much larger networks than can exact algorithms.
+• Probability theory can be combined with representational ideas from first-order logic to
+produce very powerful systems for reasoning under uncertainty. Relational probability models (RPMs) include representational restrictions that guarantee a well-defined
+probability distribution that can be expressed as an equivalent Bayesian network. Openuniverse probability models handle existence and identity uncertainty, defining probabilty distributions over the infinite space of first-order possible worlds.
+• Various alternative systems for reasoning under uncertainty have been suggested. Generally speaking, truth-functional systems are not well suited for such reasoning.
+
+B IBLIOGRAPHICAL AND H ISTORICAL N OTES
+The use of networks to represent probabilistic information began early in the 20th century,
+with the work of Sewall Wright on the probabilistic analysis of genetic inheritance and animal growth factors (Wright, 1921, 1934). I. J. Good (1961), in collaboration with Alan
+Turing, developed probabilistic representations and Bayesian inference methods that could
+be regarded as a forerunner of modern Bayesian networks—although the paper is not often
+cited in this context.10 The same paper is the original source for the noisy-OR model.
+The influence diagram representation for decision problems, which incorporated a
+DAG representation for random variables, was used in decision analysis in the late 1970s
+(see Chapter 16), but only enumeration was used for evaluation. Judea Pearl developed the
+message-passing method for carrying out inference in tree networks (Pearl, 1982a) and polytree networks (Kim and Pearl, 1983) and explained the importance of causal rather than diagnostic probability models, in contrast to the certainty-factor systems then in vogue.
+The first expert system using Bayesian networks was C ONVINCE (Kim, 1983). Early
+applications in medicine included the M UNIN system for diagnosing neuromuscular disorders
+(Andersen et al., 1989) and the PATHFINDER system for pathology (Heckerman, 1991). The
+CPCS system (Pradhan et al., 1994) is a Bayesian network for internal medicine consisting
+10 I. J. Good was chief statistician for Turing’s code-breaking team in World War II. In 2001: A Space Odyssey
+
+(Clarke, 1968a), Good and Minsky are credited with making the breakthrough that led to the development of the
+HAL 9000 computer.
+
+Bibliographical and Historical Notes
+
+MARKOV NETWORK
+
+NONSERIAL DYNAMIC
+PROGRAMMING
+
+553
+
+of 448 nodes, 906 links and 8,254 conditional probability values. (The front cover shows a
+portion of the network.)
+Applications in engineering include the Electric Power Research Institute’s work on
+monitoring power generators (Morjaria et al., 1995), NASA’s work on displaying timecritical information at Mission Control in Houston (Horvitz and Barry, 1995), and the general
+field of network tomography, which aims to infer unobserved local properties of nodes and
+links in the Internet from observations of end-to-end message performance (Castro et al.,
+2004). Perhaps the most widely used Bayesian network systems have been the diagnosisand-repair modules (e.g., the Printer Wizard) in Microsoft Windows (Breese and Heckerman,
+1996) and the Office Assistant in Microsoft Office (Horvitz et al., 1998). Another important application area is biology: Bayesian networks have been used for identifying human
+genes by reference to mouse genes (Zhang et al., 2003), inferring cellular networks Friedman
+(2004), and many other tasks in bioinformatics. We could go on, but instead we’ll refer you
+to Pourret et al. (2008), a 400-page guide to applications of Bayesian networks.
+Ross Shachter (1986), working in the influence diagram community, developed the first
+complete algorithm for general Bayesian networks. His method was based on goal-directed
+reduction of the network using posterior-preserving transformations. Pearl (1986) developed
+a clustering algorithm for exact inference in general Bayesian networks, utilizing a conversion
+to a directed polytree of clusters in which message passing was used to achieve consistency
+over variables shared between clusters. A similar approach, developed by the statisticians
+David Spiegelhalter and Steffen Lauritzen (Lauritzen and Spiegelhalter, 1988), is based on
+conversion to an undirected form of graphical model called a Markov network. This approach is implemented in the H UGIN system, an efficient and widely used tool for uncertain
+reasoning (Andersen et al., 1989). Boutilier et al. (1996) show how to exploit context-specific
+independence in clustering algorithms.
+The basic idea of variable elimination—that repeated computations within the overall
+sum-of-products expression can be avoided by caching—appeared in the symbolic probabilistic inference (SPI) algorithm (Shachter et al., 1990). The elimination algorithm we describe
+is closest to that developed by Zhang and Poole (1994). Criteria for pruning irrelevant variables were developed by Geiger et al. (1990) and by Lauritzen et al. (1990); the criterion we
+give is a simple special case of these. Dechter (1999) shows how the variable elimination idea
+is essentially identical to nonserial dynamic programming (Bertele and Brioschi, 1972), an
+algorithmic approach that can be applied to solve a range of inference problems in Bayesian
+networks—for example, finding the most likely explanation for a set of observations. This
+connects Bayesian network algorithms to related methods for solving CSPs and gives a direct
+measure of the complexity of exact inference in terms of the tree width of the network. Wexler
+and Meek (2009) describe a method of preventing exponential growth in the size of factors
+computed in variable elimination; their algorithm breaks down large factors into products of
+smaller factors and simultaneously computes an error bound for the resulting approximation.
+The inclusion of continuous random variables in Bayesian networks was considered
+by Pearl (1988) and Shachter and Kenley (1989); these papers discussed networks containing only continuous variables with linear Gaussian distributions. The inclusion of discrete
+variables has been investigated by Lauritzen and Wermuth (1989) and implemented in the
+
+554
+
+VARIATIONAL
+APPROXIMATION
+
+VARIATIONAL
+PARAMETER
+
+MEAN FIELD
+
+Chapter 14.
+
+Probabilistic Reasoning
+
+cHUGIN system (Olesen, 1993). Further analysis of linear Gaussian models, with connections to many other models used in statistics, appears in Roweis and Ghahramani (1999) The
+probit distribution is usually attributed to Gaddum (1933) and Bliss (1934), although it had
+been discovered several times in the 19th century. Bliss’s work was expanded considerably
+by Finney (1947). The probit has been used widely for modeling discrete choice phenomena
+and can be extended to handle more than two choices (Daganzo, 1979). The logit model was
+introduced by Berkson (1944); initially much derided, it eventually became more popular
+than the probit model. Bishop (1995) gives a simple justification for its use.
+Cooper (1990) showed that the general problem of inference in unconstrained Bayesian
+networks is NP-hard, and Paul Dagum and Mike Luby (1993) showed the corresponding
+approximation problem to be NP-hard. Space complexity is also a serious problem in both
+clustering and variable elimination methods. The method of cutset conditioning, which was
+developed for CSPs in Chapter 6, avoids the construction of exponentially large tables. In a
+Bayesian network, a cutset is a set of nodes that, when instantiated, reduces the remaining
+nodes to a polytree that can be solved in linear time and space. The query is answered by
+summing over all the instantiations of the cutset, so the overall space requirement is still linear (Pearl, 1988). Darwiche (2001) describes a recursive conditioning algorithm that allows
+a complete range of space/time tradeoffs.
+The development of fast approximation algorithms for Bayesian network inference is
+a very active area, with contributions from statistics, computer science, and physics. The
+rejection sampling method is a general technique that is long known to statisticians; it was
+first applied to Bayesian networks by Max Henrion (1988), who called it logic sampling.
+Likelihood weighting, which was developed by Fung and Chang (1989) and Shachter and
+Peot (1989), is an example of the well-known statistical method of importance sampling.
+Cheng and Druzdzel (2000) describe an adaptive version of likelihood weighting that works
+well even when the evidence has very low prior likelihood.
+Markov chain Monte Carlo (MCMC) algorithms began with the Metropolis algorithm,
+due to Metropolis et al. (1953), which was also the source of the simulated annealing algorithm described in Chapter 4. The Gibbs sampler was devised by Geman and Geman (1984)
+for inference in undirected Markov networks. The application of MCMC to Bayesian networks is due to Pearl (1987). The papers collected by Gilks et al. (1996) cover a wide variety
+of applications of MCMC, several of which were developed in the well-known B UGS package (Gilks et al., 1994).
+There are two very important families of approximation methods that we did not cover
+in the chapter. The first is the family of variational approximation methods, which can be
+used to simplify complex calculations of all kinds. The basic idea is to propose a reduced
+version of the original problem that is simple to work with, but that resembles the original
+problem as closely as possible. The reduced problem is described by some variational parameters λ that are adjusted to minimize a distance function D between the original and
+the reduced problem, often by solving the system of equations ∂D/∂λ = 0. In many cases,
+strict upper and lower bounds can be obtained. Variational methods have long been used in
+statistics (Rustagi, 1976). In statistical physics, the mean-field method is a particular variational approximation in which the individual variables making up the model are assumed
+
+Bibliographical and Historical Notes
+
+BELIEF
+PROPAGATION
+
+TURBO DECODING
+
+INDEXED RANDOM
+VARIABLE
+
+555
+
+to be completely independent. This idea was applied to solve large undirected Markov networks (Peterson and Anderson, 1987; Parisi, 1988). Saul et al. (1996) developed the mathematical foundations for applying variational methods to Bayesian networks and obtained
+accurate lower-bound approximations for sigmoid networks with the use of mean-field methods. Jaakkola and Jordan (1996) extended the methodology to obtain both lower and upper
+bounds. Since these early papers, variational methods have been applied to many specific
+families of models. The remarkable paper by Wainwright and Jordan (2008) provides a unifying theoretical analysis of the literature on variational methods.
+A second important family of approximation algorithms is based on Pearl’s polytree
+message-passing algorithm (1982a). This algorithm can be applied to general networks, as
+suggested by Pearl (1988). The results might be incorrect, or the algorithm might fail to terminate, but in many cases, the values obtained are close to the true values. Little attention
+was paid to this so-called belief propagation (or BP) approach until McEliece et al. (1998)
+observed that message passing in a multiply connected Bayesian network was exactly the
+computation performed by the turbo decoding algorithm (Berrou et al., 1993), which provided a major breakthrough in the design of efficient error-correcting codes. The implication
+is that BP is both fast and accurate on the very large and very highly connected networks used
+for decoding and might therefore be useful more generally. Murphy et al. (1999) presented a
+promising empirical study of BP’s performance, and Weiss and Freeman (2001) established
+strong convergence results for BP on linear Gaussian networks. Weiss (2000b) shows how an
+approximation called loopy belief propagation works, and when the approximation is correct.
+Yedidia et al. (2005) made further connections between loopy propagation and ideas from
+statistical physics.
+The connection between probability and first-order languages was first studied by Carnap (1950). Gaifman (1964) and Scott and Krauss (1966) defined a language in which probabilities could be associated with first-order sentences and for which models were probability
+measures on possible worlds. Within AI, this idea was developed for propositional logic
+by Nilsson (1986) and for first-order logic by Halpern (1990). The first extensive investigation of knowledge representation issues in such languages was carried out by Bacchus
+(1990). The basic idea is that each sentence in the knowledge base expressed a constraint on
+the distribution over possible worlds; one sentence entails another if it expresses a stronger
+constraint. For example, the sentence ∀ x P (Hungry(x)) > 0.2 rules out distributions
+in which any object is hungry with probability less than 0.2; thus, it entails the sentence
+∀ x P (Hungry(x)) > 0.1. It turns out that writing a consistent set of sentences in these
+languages is quite difficult and constructing a unique probability model nearly impossible
+unless one adopts the representation approach of Bayesian networks by writing suitable sentences about conditional probabilities.
+Beginning in the early 1990s, researchers working on complex applications noticed
+the expressive limitations of Bayesian networks and developed various languages for writing
+“templates” with logical variables, from which large networks could be constructed automatically for each problem instance (Breese, 1992; Wellman et al., 1992). The most important
+such language was B UGS (Bayesian inference Using Gibbs Sampling) (Gilks et al., 1994),
+which combined Bayesian networks with the indexed random variable notation common in
+
+556
+
+RECORD LINKAGE
+
+Chapter 14.
+
+Probabilistic Reasoning
+
+statistics. (In B UGS, an indexed random variable looks like X[i], where i has a defined integer
+range.) These languages inherited the key property of Bayesian networks: every well-formed
+knowledge base defines a unique, consistent probability model. Languages with well-defined
+semantics based on unique names and domain closure drew on the representational capabilities of logic programming (Poole, 1993; Sato and Kameya, 1997; Kersting et al., 2000)
+and semantic networks (Koller and Pfeffer, 1998; Pfeffer, 2000). Pfeffer (2007) went on to
+develop I BAL , which represents first-order probability models as probabilistic programs in a
+programming language extended with a randomization primitive. Another important thread
+was the combination of relational and first-order notations with (undirected) Markov networks (Taskar et al., 2002; Domingos and Richardson, 2004), where the emphasis has been
+less on knowledge representation and more on learning from large data sets.
+Initially, inference in these models was performed by generating an equivalent Bayesian
+network. Pfeffer et al. (1999) introduced a variable elimination algorithm that cached each
+computed factor for reuse by later computations involving the same relations but different
+objects, thereby realizing some of the computational gains of lifting. The first truly lifted
+inference algorithm was a lifted form of variable elimination described by Poole (2003) and
+subsequently improved by de Salvo Braz et al. (2007). Further advances, including cases
+where certain aggregate probabilities can be computed in closed form, are described by Milch
+et al. (2008) and Kisynski and Poole (2009). Pasula and Russell (2001) studied the application
+of MCMC to avoid building the complete equivalent Bayes net in cases of relational and
+identity uncertainty. Getoor and Taskar (2007) collect many important papers on first-order
+probability models and their use in machine learning.
+Probabilistic reasoning about identity uncertainty has two distinct origins. In statistics, the problem of record linkage arises when data records do not contain standard unique
+identifiers—for example, various citations of this book might name its first author “Stuart
+Russell” or “S. J. Russell” or even “Stewart Russle,” and other authors may use the some of
+the same names. Literally hundreds of companies exist solely to solve record linkage problems in financial, medical, census, and other data. Probabilistic analysis goes back to work
+by Dunn (1946); the Fellegi–Sunter model (1969), which is essentially naive Bayes applied
+to matching, still dominates current practice. The second origin for work on identity uncertainty is multitarget tracking (Sittler, 1964), which we cover in Chapter 15. For most of its
+history, work in symbolic AI assumed erroneously that sensors could supply sentences with
+unique identifiers for objects. The issue was studied in the context of language understanding
+by Charniak and Goldman (1992) and in the context of surveillance by (Huang and Russell,
+1998) and Pasula et al. (1999). Pasula et al. (2003) developed a complex generative model
+for authors, papers, and citation strings, involving both relational and identity uncertainty,
+and demonstrated high accuracy for citation information extraction. The first formally defined language for open-universe probability models was B LOG (Milch et al., 2005), which
+came with a complete (albeit slow) MCMC inference algorithm for all well-defined mdoels.
+(The program code faintly visible on the front cover of this book is part of a B LOG model
+for detecting nuclear explosions from seismic signals as part of the UN Comprehensive Test
+Ban Treaty verification regime.) Laskey (2008) describes another open-universe modeling
+language called multi-entity Bayesian networks.
+
+Bibliographical and Historical Notes
+
+POSSIBILITY THEORY
+
+557
+
+As explained in Chapter 13, early probabilistic systems fell out of favor in the early
+1970s, leaving a partial vacuum to be filled by alternative methods. Certainty factors were
+invented for use in the medical expert system M YCIN (Shortliffe, 1976), which was intended
+both as an engineering solution and as a model of human judgment under uncertainty. The
+collection Rule-Based Expert Systems (Buchanan and Shortliffe, 1984) provides a complete
+overview of M YCIN and its descendants (see also Stefik, 1995). David Heckerman (1986)
+showed that a slightly modified version of certainty factor calculations gives correct probabilistic results in some cases, but results in serious overcounting of evidence in other cases.
+The P ROSPECTOR expert system (Duda et al., 1979) used a rule-based approach in which the
+rules were justified by a (seldom tenable) global independence assumption.
+Dempster–Shafer theory originates with a paper by Arthur Dempster (1968) proposing
+a generalization of probability to interval values and a combination rule for using them. Later
+work by Glenn Shafer (1976) led to the Dempster-Shafer theory’s being viewed as a competing approach to probability. Pearl (1988) and Ruspini et al. (1992) analyze the relationship
+between the Dempster–Shafer theory and standard probability theory.
+Fuzzy sets were developed by Lotfi Zadeh (1965) in response to the perceived difficulty
+of providing exact inputs to intelligent systems. The text by Zimmermann (2001) provides
+a thorough introduction to fuzzy set theory; papers on fuzzy applications are collected in
+Zimmermann (1999). As we mentioned in the text, fuzzy logic has often been perceived
+incorrectly as a direct competitor to probability theory, whereas in fact it addresses a different
+set of issues. Possibility theory (Zadeh, 1978) was introduced to handle uncertainty in fuzzy
+systems and has much in common with probability. Dubois and Prade (1994) survey the
+connections between possibility theory and probability theory.
+The resurgence of probability depended mainly on Pearl’s development of Bayesian
+networks as a method for representing and using conditional independence information. This
+resurgence did not come without a fight; Peter Cheeseman’s (1985) pugnacious “In Defense
+of Probability” and his later article “An Inquiry into Computer Understanding” (Cheeseman,
+1988, with commentaries) give something of the flavor of the debate. Eugene Charniak
+helped present the ideas to AI researchers with a popular article, “Bayesian networks without tears”11 (1991), and book (1993). The book by Dean and Wellman (1991) also helped
+introduce Bayesian networks to AI researchers. One of the principal philosophical objections
+of the logicists was that the numerical calculations that probability theory was thought to require were not apparent to introspection and presumed an unrealistic level of precision in our
+uncertain knowledge. The development of qualitative probabilistic networks (Wellman,
+1990a) provided a purely qualitative abstraction of Bayesian networks, using the notion of
+positive and negative influences between variables. Wellman shows that in many cases such
+information is sufficient for optimal decision making without the need for the precise specification of probability values. Goldszmidt and Pearl (1996) take a similar approach. Work
+by Adnan Darwiche and Matt Ginsberg (1992) extracts the basic properties of conditioning
+and evidence combination from probability theory and shows that they can also be applied in
+logical and default reasoning. Often, programs speak louder than words, and the ready avail11 The title of the original version of the article was “Pearl for swine.”
+
+558
+
+Chapter 14.
+
+Probabilistic Reasoning
+
+ability of high-quality software such as the Bayes Net toolkit (Murphy, 2001) accelerated the
+adoption of the technology.
+The most important single publication in the growth of Bayesian networks was undoubtedly the text Probabilistic Reasoning in Intelligent Systems (Pearl, 1988). Several excellent
+texts (Lauritzen, 1996; Jensen, 2001; Korb and Nicholson, 2003; Jensen, 2007; Darwiche,
+2009; Koller and Friedman, 2009) provide thorough treatments of the topics we have covered in this chapter. New research on probabilistic reasoning appears both in mainstream
+AI journals, such as Artificial Intelligence and the Journal of AI Research, and in more specialized journals, such as the International Journal of Approximate Reasoning. Many papers
+on graphical models, which include Bayesian networks, appear in statistical journals. The
+proceedings of the conferences on Uncertainty in Artificial Intelligence (UAI), Neural Information Processing Systems (NIPS), and Artificial Intelligence and Statistics (AISTATS) are
+excellent sources for current research.
+
+E XERCISES
+14.1 We have a bag of three biased coins a, b, and c with probabilities of coming up heads
+of 20%, 60%, and 80%, respectively. One coin is drawn randomly from the bag (with equal
+likelihood of drawing each of the three coins), and then the coin is flipped three times to
+generate the outcomes X1 , X2 , and X3 .
+a. Draw the Bayesian network corresponding to this setup and define the necessary CPTs.
+b. Calculate which coin was most likely to have been drawn from the bag if the observed
+flips come out heads twice and tails once.
+14.2 Equation (14.1) on page 513 defines the joint distribution represented by a Bayesian
+network in terms of the parameters θ(Xi | P arents(Xi )). This exercise asks you to derive the
+equivalence between the parameters and the conditional probabilities P(Xi | P arents(Xi ))
+from this definition.
+a. Consider a simple network X → Y → Z with three Boolean variables. Use Equations (13.3) and (13.6) (pages 485 and 492) to express the conditional probability
+P (z | y) as the ratio of two sums, each over entries in the joint distribution P(X, Y, Z).
+b. Now use Equation (14.1) to write this expression in terms of the network parameters
+θ(X), θ(Y | X), and θ(Z | Y ).
+c. Next, expand out the summations in your expression from part (b), writing out explicitly
+the terms for the true and false values of 
+each summed variable. Assuming that all
+network parameters satisfy the constraint xi θ(xi | parents(Xi )) = 1, show that the
+resulting expression reduces to θ(x | y).
+d. Generalize this derivation to show that θ(Xi | P arents(Xi )) = P(Xi | P arents(Xi ))
+for any Bayesian network.
+
+Exercises
+
+559
+
+ARC REVERSAL
+
+14.3 The operation of arc reversal in a Bayesian network allows us to change the direction
+of an arc X → Y while preserving the joint probability distribution that the network represents (Shachter, 1986). Arc reversal may require introducing new arcs: all the parents of X
+also become parents of Y , and all parents of Y also become parents of X.
+a. Assume that X and Y start with m and n parents, respectively, and that all variables
+have k values. By calculating the change in size for the CPTs of X and Y , show that the
+total number of parameters in the network cannot decrease during arc reversal. (Hint:
+the parents of X and Y need not be disjoint.)
+b. Under what circumstances can the total number remain constant?
+c. Let the parents of X be U ∪ V and the parents of Y be V ∪ W, where U and W are
+disjoint. The formulas for the new CPTs after arc reversal are as follows:
+P(Y | U, V, W) =
+
+P(Y | V, W, x)P(x | U, V)
+x
+
+P(X | U, V, W, Y ) = P(Y | X, V, W)P(X | U, V)/P(Y | U, V, W) .
+Prove that the new network expresses the same joint distribution over all variables as
+the original network.
+14.4
+
+Consider the Bayesian network in Figure 14.2.
+
+a. If no evidence is observed, are Burglary and Earthquake independent? Prove this from
+the numerical semantics and from the topological semantics.
+b. If we observe Alarm = true, are Burglary and Earthquake independent? Justify your
+answer by calculating whether the probabilities involved satisfy the definition of conditional independence.
+14.5 Suppose that in a Bayesian network containing an unobserved variable Y , all the variables in the Markov blanket MB(Y ) have been observed.
+a. Prove that removing the node Y from the network will not affect the posterior distribution for any other unobserved variable in the network.
+b. Discuss whether we can remove Y if we are planning to use (i) rejection sampling and
+(ii) likelihood weighting.
+14.6 Let Hx be a random variable denoting the handedness of an individual x, with possible
+values l or r. A common hypothesis is that left- or right-handedness is inherited by a simple
+mechanism; that is, perhaps there is a gene Gx , also with values l or r, and perhaps actual
+handedness turns out mostly the same (with some probability s) as the gene an individual
+possesses. Furthermore, perhaps the gene itself is equally likely to be inherited from either
+of an individual’s parents, with a small nonzero probability m of a random mutation flipping
+the handedness.
+a. Which of the three networks in Figure 14.20 claim that P(Gfather , Gmother , Gchild ) =
+P(Gfather )P(Gmother )P(Gchild )?
+b. Which of the three networks make independence claims that are consistent with the
+hypothesis about the inheritance of handedness?
+
+560
+
+Chapter 14.
+
+Probabilistic Reasoning
+
+Gmother
+
+Gfather
+
+Gmother
+
+Gfather
+
+Gmother
+
+Gfather
+
+Hmother
+
+Hfather
+
+Hmother
+
+Hfather
+
+Hmother
+
+Hfather
+
+Gchild
+
+Gchild
+
+Gchild
+
+Hchild
+
+Hchild
+
+Hchild
+
+(a)
+
+(b)
+
+(c)
+
+Figure 14.20 Three possible structures for a Bayesian network describing genetic inheritance of handedness.
+
+c. Which of the three networks is the best description of the hypothesis?
+d. Write down the CPT for the Gchild node in network (a), in terms of s and m.
+e. Suppose that P (Gfather = l) = P (Gmother = l) = q. In network (a), derive an expression for P (Gchild = l) in terms of m and q only, by conditioning on its parent nodes.
+f. Under conditions of genetic equilibrium, we expect the distribution of genes to be the
+same across generations. Use this to calculate the value of q, and, given what you know
+about handedness in humans, explain why the hypothesis described at the beginning of
+this question must be wrong.
+14.7 The Markov blanket of a variable is defined on page 517. Prove that a variable
+is independent of all other variables in the network, given its Markov blanket and derive
+Equation (14.12) (page 538).
+Battery
+
+Radio
+
+Ignition
+
+Gas
+
+Starts
+
+Moves
+
+Figure 14.21 A Bayesian network describing some features of a car’s electrical system
+and engine. Each variable is Boolean, and the true value indicates that the corresponding
+aspect of the vehicle is in working order.
+
+Exercises
+
+561
+14.8
+
+Consider the network for car diagnosis shown in Figure 14.21.
+
+a. Extend the network with the Boolean variables IcyWeather and StarterMotor .
+b. Give reasonable conditional probability tables for all the nodes.
+c. How many independent values are contained in the joint probability distribution for
+eight Boolean nodes, assuming that no conditional independence relations are known
+to hold among them?
+d. How many independent probability values do your network tables contain?
+e. The conditional distribution for Starts could be described as a noisy-AND distribution.
+Define this family in general and relate it to the noisy-OR distribution.
+14.9
+
+Consider the family of linear Gaussian networks, as defined on page 520.
+
+a. In a two-variable network, let X1 be the parent of X2 , let X1 have a Gaussian prior,
+and let P(X2 | X1 ) be a linear Gaussian distribution. Show that the joint distribution
+P (X1 , X2 ) is a multivariate Gaussian, and calculate its covariance matrix.
+b. Prove by induction that the joint distribution for a general linear Gaussian network on
+X1 , . . . , Xn is also a multivariate Gaussian.
+14.10 The probit distribution defined on page 522 describes the probability distribution for
+a Boolean child, given a single continuous parent.
+a. How might the definition be extended to cover multiple continuous parents?
+b. How might it be extended to handle a multivalued child variable? Consider both cases
+where the child’s values are ordered (as in selecting a gear while driving, depending
+on speed, slope, desired acceleration, etc.) and cases where they are unordered (as in
+selecting bus, train, or car to get to work). (Hint: Consider ways to divide the possible
+values into two sets, to mimic a Boolean variable.)
+14.11 In your local nuclear power station, there is an alarm that senses when a temperature
+gauge exceeds a given threshold. The gauge measures the temperature of the core. Consider
+the Boolean variables A (alarm sounds), FA (alarm is faulty), and FG (gauge is faulty) and
+the multivalued nodes G (gauge reading) and T (actual core temperature).
+a. Draw a Bayesian network for this domain, given that the gauge is more likely to fail
+when the core temperature gets too high.
+b. Is your network a polytree? Why or why not?
+c. Suppose there are just two possible actual and measured temperatures, normal and high;
+the probability that the gauge gives the correct temperature is x when it is working, but
+y when it is faulty. Give the conditional probability table associated with G.
+d. Suppose the alarm works correctly unless it is faulty, in which case it never sounds.
+Give the conditional probability table associated with A.
+e. Suppose the alarm and gauge are working and the alarm sounds. Calculate an expression for the probability that the temperature of the core is too high, in terms of the
+various conditional probabilities in the network.
+
+562
+
+Chapter 14.
+
+F1
+
+F2
+
+M1
+
+M2
+
+F1
+
+F2
+
+N
+
+Figure 14.22
+
+M2
+
+M1
+
+N
+
+M2
+
+M1
+
+F1
+
+N
+(i)
+
+Probabilistic Reasoning
+
+(ii)
+
+F2
+(iii)
+
+Three possible networks for the telescope problem.
+
+14.12 Two astronomers in different parts of the world make measurements M1 and M2 of
+the number of stars N in some small region of the sky, using their telescopes. Normally, there
+is a small possibility e of error by up to one star in each direction. Each telescope can also
+(with a much smaller probability f ) be badly out of focus (events F1 and F2 ), in which case
+the scientist will undercount by three or more stars (or if N is less than 3, fail to detect any
+stars at all). Consider the three networks shown in Figure 14.22.
+a. Which of these Bayesian networks are correct (but not necessarily efficient) representations of the preceding information?
+b. Which is the best network? Explain.
+c. Write out a conditional distribution for P(M1 | N ), for the case where N ∈ {1, 2, 3} and
+M1 ∈ {0, 1, 2, 3, 4}. Each entry in the conditional distribution should be expressed as a
+function of the parameters e and/or f .
+d. Suppose M1 = 1 and M2 = 3. What are the possible numbers of stars if you assume no
+prior constraint on the values of N ?
+e. What is the most likely number of stars, given these observations? Explain how to
+compute this, or if it is not possible to compute, explain what additional information is
+needed and how it would affect the result.
+14.13 Consider the network shown in Figure 14.22(ii), and assume that the two telescopes
+work identically. N ∈ {1, 2, 3} and M1 , M2 ∈ {0, 1, 2, 3, 4}, with the symbolic CPTs as described in Exercise 14.12. Using the enumeration algorithm (Figure 14.9 on page 525), calculate the probability distribution P(N | M1 = 2, M2 = 2).
+14.14
+
+Consider the Bayes net shown in Figure 14.23.
+
+a. Which of the following are asserted by the network structure?
+(i) P(B, I, M ) = P(B)P(I)P(M ).
+(ii) P(J | G) = P(J | G, I).
+(iii) P(M | G, B, I) = P(M | G, B, I, J).
+
+Exercises
+
+563
+
+P(B)
+
+B M
+
+P(I )
+
+t
+t
+f
+f
+
+.9
+.5
+.5
+.1
+
+t
+f
+t
+f
+
+P(M)
+
+.9
+
+.1
+
+B
+
+M
+
+I
+
+B
+
+I
+
+M
+
+P(G)
+
+t
+t
+t
+t
+f
+f
+f
+f
+
+t
+t
+f
+f
+t
+t
+f
+f
+
+t
+f
+t
+f
+t
+f
+t
+f
+
+.9
+.8
+.0
+.0
+.2
+.1
+.0
+.0
+
+G
+J
+
+G
+
+P(J)
+
+t
+f
+
+.9
+.0
+
+Figure 14.23 A simple Bayes net with Boolean variables B = BrokeElectionLaw ,
+I = Indicted , M = PoliticallyMotivatedProsecutor , G = FoundGuilty, J = Jailed .
+
+b. Calculate the value of P (b, i, ¬m, g, j).
+c. Calculate the probability that someone goes to jail given that they broke the law, have
+been indicted, and face a politically motivated prosecutor.
+d. A context-specific independence (see page 542) allows a variable to be independent
+of some of its parents given certain values of others. In addition to the usual conditional
+independences given by the graph structure, what context-specific independences exist
+in the Bayes net in Figure 14.23?
+e. Suppose we want to add the variable P = PresidentialPardon to the network; draw the
+new network and briefly explain any links you add.
+14.15
+
+Consider the variable elimination algorithm in Figure 14.11 (page 528).
+
+a. Section 14.4 applies variable elimination to the query
+P(Burglary | JohnCalls = true, MaryCalls = true) .
+Perform the calculations indicated and check that the answer is correct.
+b. Count the number of arithmetic operations performed, and compare it with the number
+performed by the enumeration algorithm.
+c. Suppose a network has the form of a chain: a sequence of Boolean variables X1 , . . . , Xn
+where P arents(Xi ) = {Xi−1 } for i = 2, . . . , n. What is the complexity of computing
+P(X1 | Xn = true) using enumeration? Using variable elimination?
+d. Prove that the complexity of running variable elimination on a polytree network is linear
+in the size of the tree for any variable ordering consistent with the network structure.
+14.16
+
+Investigate the complexity of exact inference in general Bayesian networks:
+
+a. Prove that any 3-SAT problem can be reduced to exact inference in a Bayesian network
+constructed to represent the particular problem and hence that exact inference is NP-
+
+564
+
+Chapter 14.
+
+Probabilistic Reasoning
+
+hard. (Hint: Consider a network with one variable for each proposition symbol, one for
+each clause, and one for the conjunction of clauses.)
+b. The problem of counting the number of satisfying assignments for a 3-SAT problem is
+#P-complete. Show that exact inference is at least as hard as this.
+14.17 Consider the problem of generating a random sample from a specified distribution
+on a single variable. Assume you have a random number generator that returns a random
+number uniformly distributed between 0 and 1.
+CUMULATIVE
+DISTRIBUTION
+
+a. Let X be a discrete variable with P (X = xi ) = pi for i ∈ {1, . . . , k}. The cumulative
+distribution of X gives the probability that X ∈ {x1 , . . . , xj } for each possible j. (See
+also Appendix A.) Explain how to calculate the cumulative distribution in O(k) time
+and how to generate a single sample of X from it. Can the latter be done in less than
+O(k) time?
+b. Now suppose we want to generate N samples of X, where N & k. Explain how to do
+this with an expected run time per sample that is constant (i.e., independent of k).
+c. Now consider a continuous-valued variable with a parameterized distribution (e.g.,
+Gaussian). How can samples be generated from such a distribution?
+d. Suppose you want to query a continuous-valued variable and you are using a sampling
+algorithm such as L IKELIHOODW EIGHTING to do the inference. How would you have
+to modify the query-answering process?
+14.18 Consider the query P(Rain | Sprinkler = true, WetGrass = true) in Figure 14.12(a)
+(page 529) and how Gibbs sampling can answer it.
+a. How many states does the Markov chain have?
+b. Calculate the transition matrix Q containing q(y → y ) for all y, y .
+c. What does Q2 , the square of the transition matrix, represent?
+d. What about Qn as n → ∞?
+e. Explain how to do probabilistic inference in Bayesian networks, assuming that Qn is
+available. Is this a practical way to do inference?
+14.19
+
+This exercise explores the stationary distribution for Gibbs sampling methods.
+
+a. The convex composition [α, q1 ; 1 − α, q2 ] of q1 and q2 is a transition probability distribution that first chooses one of q1 and q2 with probabilities α and 1 − α, respectively,
+and then applies whichever is chosen. Prove that if q1 and q2 are in detailed balance
+with π, then their convex composition is also in detailed balance with π. (Note: this
+result justifies a variant of G IBBS-A SK in which variables are chosen at random rather
+than sampled in a fixed sequence.)
+b. Prove that if each of q1 and q2 has π as its stationary distribution, then the sequential
+composition q = q1 ◦ q2 also has π as its stationary distribution.
+METROPOLIS–
+HASTINGS
+
+14.20 The Metropolis–Hastings algorithm is a member of the MCMC family; as such, it is
+designed to generate samples x (eventually) according to target probabilities π(x). (Typically
+
+Exercises
+
+PROPOSAL
+DISTRIBUTION
+ACCEPTANCE
+PROBABILITY
+
+565
+we are interested in sampling from π(x) = P (x | e).) Like simulated annealing, Metropolis–
+Hastings operates in two stages. First, it samples a new state x from a proposal distribution
+q(x | x), given the current state x. Then, it probabilistically accepts or rejects x according to
+the acceptance probability
+
+π(x )q(x | x )
+
+α(x | x) = min 1,
+.
+π(x)q(x | x)
+If the proposal is rejected, the state remains at x.
+a. Consider an ordinary Gibbs sampling step for a specific variable Xi . Show that this
+step, considered as a proposal, is guaranteed to be accepted by Metropolis–Hastings.
+(Hence, Gibbs sampling is a special case of Metropolis–Hastings.)
+b. Show that the two-step process above, viewed as a transition probability distribution, is
+in detailed balance with π.
+14.21 Three soccer teams A, B, and C, play each other once. Each match is between two
+teams, and can be won, drawn, or lost. Each team has a fixed, unknown degree of quality—
+an integer ranging from 0 to 3—and the outcome of a match depends probabilistically on the
+difference in quality between the two teams.
+a. Construct a relational probability model to describe this domain, and suggest numerical
+values for all the necessary probability distributions.
+b. Construct the equivalent Bayesian network for the three matches.
+c. Suppose that in the first two matches A beats B and draws with C. Using an exact
+inference algorithm of your choice, compute the posterior distribution for the outcome
+of the third match.
+d. Suppose there are n teams in the league and we have the results for all but the last
+match. How does the complexity of predicting the last game vary with n?
+e. Investigate the application of MCMC to this problem. How quickly does it converge in
+practice and how well does it scale?
+
+15
+
+PROBABILISTIC
+REASONING OVER TIME
+
+In which we try to interpret the present, understand the past, and perhaps predict
+the future, even when very little is crystal clear.
+
+Agents in partially observable environments must be able to keep track of the current state, to
+the extent that their sensors allow. In Section 4.4 we showed a methodology for doing that: an
+agent maintains a belief state that represents which states of the world are currently possible.
+From the belief state and a transition model, the agent can predict how the world might
+evolve in the next time step. From the percepts observed and a sensor model, the agent can
+update the belief state. This is a pervasive idea: in Chapter 4 belief states were represented by
+explicitly enumerated sets of states, whereas in Chapters 7 and 11 they were represented by
+logical formulas. Those approaches defined belief states in terms of which world states were
+possible, but could say nothing about which states were likely or unlikely. In this chapter, we
+use probability theory to quantify the degree of belief in elements of the belief state.
+As we show in Section 15.1, time itself is handled in the same way as in Chapter 7: a
+changing world is modeled using a variable for each aspect of the world state at each point in
+time. The transition and sensor models may be uncertain: the transition model describes the
+probability distribution of the variables at time t, given the state of the world at past times,
+while the sensor model describes the probability of each percept at time t, given the current
+state of the world. Section 15.2 defines the basic inference tasks and describes the general structure of inference algorithms for temporal models. Then we describe three specific
+kinds of models: hidden Markov models, Kalman filters, and dynamic Bayesian networks (which include hidden Markov models and Kalman filters as special cases). Finally,
+Section 15.6 examines the problems faced when keeping track of more than one thing.
+
+15.1
+
+T IME AND U NCERTAINTY
+We have developed our techniques for probabilistic reasoning in the context of static worlds,
+in which each random variable has a single fixed value. For example, when repairing a car,
+we assume that whatever is broken remains broken during the process of diagnosis; our job
+is to infer the state of the car from observed evidence, which also remains fixed.
+566
+
+Section 15.1.
+
+Time and Uncertainty
+
+567
+
+Now consider a slightly different problem: treating a diabetic patient. As in the case of
+car repair, we have evidence such as recent insulin doses, food intake, blood sugar measurements, and other physical signs. The task is to assess the current state of the patient, including
+the actual blood sugar level and insulin level. Given this information, we can make a decision about the patient’s food intake and insulin dose. Unlike the case of car repair, here the
+dynamic aspects of the problem are essential. Blood sugar levels and measurements thereof
+can change rapidly over time, depending on recent food intake and insulin doses, metabolic
+activity, the time of day, and so on. To assess the current state from the history of evidence
+and to predict the outcomes of treatment actions, we must model these changes.
+The same considerations arise in many other contexts, such as tracking the location of
+a robot, tracking the economic activity of a nation, and making sense of a spoken or written
+sequence of words. How can dynamic situations like these be modeled?
+
+15.1.1 States and observations
+TIME SLICE
+
+We view the world as a series of snapshots, or time slices, each of which contains a set of
+random variables, some observable and some not. 1 For simplicity, we will assume that the
+same subset of variables is observable in each time slice (although this is not strictly necessary
+in anything that follows). We will use Xt to denote the set of state variables at time t, which
+are assumed to be unobservable, and Et to denote the set of observable evidence variables.
+The observation at time t is Et = et for some set of values et .
+Consider the following example: You are the security guard stationed at a secret underground installation. You want to know whether it’s raining today, but your only access to the
+outside world occurs each morning when you see the director coming in with, or without, an
+umbrella. For each day t, the set Et thus contains a single evidence variable Umbrella t or Ut
+for short (whether the umbrella appears), and the set Xt contains a single state variable Rain t
+or Rt for short (whether it is raining). Other problems can involve larger sets of variables. In
+the diabetes example, we might have evidence variables, such as MeasuredBloodSugar t and
+PulseRate t , and state variables, such as BloodSugar t and StomachContents t . (Notice that
+BloodSugar t and MeasuredBloodSugar t are not the same variable; this is how we deal with
+noisy measurements of actual quantities.)
+The interval between time slices also depends on the problem. For diabetes monitoring,
+a suitable interval might be an hour rather than a day. In this chapter we assume the interval
+between slices is fixed, so we can label times by integers. We will assume that the state
+sequence starts at t = 0; for various uninteresting reasons, we will assume that evidence starts
+arriving at t = 1 rather than t = 0. Hence, our umbrella world is represented by state variables
+R0 , R1 , R2 , . . . and evidence variables U1 , U2 , . . .. We will use the notation a:b to denote
+the sequence of integers from a to b (inclusive), and the notation Xa:b to denote the set of
+variables from Xa to Xb . For example, U1:3 corresponds to the variables U1 , U2 , U3 .
+1
+
+Uncertainty over continuous time can be modeled by stochastic differential equations (SDEs). The models
+studied in this chapter can be viewed as discrete-time approximations to SDEs.
+
+568
+
+Chapter 15.
+
+Probabilistic Reasoning over Time
+
+(a)
+
+Xt–2
+
+Xt–1
+
+Xt
+
+Xt+1
+
+Xt+2
+
+(b)
+
+Xt–2
+
+Xt–1
+
+Xt
+
+Xt+1
+
+Xt+2
+
+Figure 15.1 (a) Bayesian network structure corresponding to a first-order Markov process
+with state defined by the variables Xt . (b) A second-order Markov process.
+
+15.1.2 Transition and sensor models
+
+MARKOV
+ASSUMPTION
+
+MARKOV PROCESS
+FIRST-ORDER
+MARKOV PROCESS
+
+With the set of state and evidence variables for a given problem decided on, the next step is
+to specify how the world evolves (the transition model) and how the evidence variables get
+their values (the sensor model).
+The transition model specifies the probability distribution over the latest state variables,
+given the previous values, that is, P(Xt | X0:t−1 ). Now we face a problem: the set X0:t−1 is
+unbounded in size as t increases. We solve the problem by making a Markov assumption—
+that the current state depends on only a finite fixed number of previous states. Processes satisfying this assumption were first studied in depth by the Russian statistician Andrei Markov
+(1856–1922) and are called Markov processes or Markov chains. They come in various flavors; the simplest is the first-order Markov process, in which the current state depends only
+on the previous state and not on any earlier states. In other words, a state provides enough
+information to make the future conditionally independent of the past, and we have
+P(Xt | X0:t−1 ) = P(Xt | Xt−1 ) .
+
+STATIONARY
+PROCESS
+
+SENSOR MARKOV
+ASSUMPTION
+
+(15.1)
+
+Hence, in a first-order Markov process, the transition model is the conditional distribution
+P(Xt | Xt−1 ). The transition model for a second-order Markov process is the conditional
+distribution P(Xt | Xt−2 , Xt−1 ). Figure 15.1 shows the Bayesian network structures corresponding to first-order and second-order Markov processes.
+Even with the Markov assumption there is still a problem: there are infinitely many
+possible values of t. Do we need to specify a different distribution for each time step? We
+avoid this problem by assuming that changes in the world state are caused by a stationary
+process—that is, a process of change that is governed by laws that do not themselves change
+over time. (Don’t confuse stationary with static: in a static process, the state itself does not
+change.) In the umbrella world, then, the conditional probability of rain, P(Rt | Rt−1 ), is the
+same for all t, and we only have to specify one conditional probability table.
+Now for the sensor model. The evidence variables Et could depend on previous variables as well as the current state variables, but any state that’s worth its salt should suffice to
+generate the current sensor values. Thus, we make a sensor Markov assumption as follows:
+P(Et | X0:t , E0:t−1 ) = P(Et | Xt ) .
+
+(15.2)
+
+Thus, P(Et | Xt ) is our sensor model (sometimes called the observation model). Figure 15.2
+shows both the transition model and the sensor model for the umbrella example. Notice the
+
+Section 15.1.
+
+Time and Uncertainty
+
+569
+Rt -1
+t
+f
+
+Raint–1
+
+P(Rt )
+0.7
+0.3
+
+Rt
+t
+f
+
+Umbrellat–1
+
+Raint+1
+
+Raint
+P(U t )
+0.9
+0.2
+
+Umbrellat
+
+Umbrellat+1
+
+Figure 15.2 Bayesian network structure and conditional distributions describing the
+umbrella world. The transition model is P (Rain t | Rain t−1 ) and the sensor model is
+P (Umbrella t | Rain t ).
+
+direction of the dependence between state and sensors: the arrows go from the actual state
+of the world to sensor values because the state of the world causes the sensors to take on
+particular values: the rain causes the umbrella to appear. (The inference process, of course,
+goes in the other direction; the distinction between the direction of modeled dependencies
+and the direction of inference is one of the principal advantages of Bayesian networks.)
+In addition to specifying the transition and sensor models, we need to say how everything gets started—the prior probability distribution at time 0, P(X0 ). With that, we have a
+specification of the complete joint distribution over all the variables, using Equation (14.2).
+For any t,
+P(X0:t , E1:t ) = P(X0 )
+
+t
+
+
+P(Xi | Xi−1 ) P(Ei | Xi ) .
+
+(15.3)
+
+i=1
+
+The three terms on the right-hand side are the initial state model P(X0 ), the transition model
+P(Xi | Xi−1 ), and the sensor model P(Ei | Xi ).
+The structure in Figure 15.2 is a first-order Markov process—the probability of rain is
+assumed to depend only on whether it rained the previous day. Whether such an assumption
+is reasonable depends on the domain itself. The first-order Markov assumption says that the
+state variables contain all the information needed to characterize the probability distribution
+for the next time slice. Sometimes the assumption is exactly true—for example, if a particle
+is executing a random walk along the x-axis, changing its position by ±1 at each time step,
+then using the x-coordinate as the state gives a first-order Markov process. Sometimes the
+assumption is only approximate, as in the case of predicting rain only on the basis of whether
+it rained the previous day. There are two ways to improve the accuracy of the approximation:
+1. Increasing the order of the Markov process model. For example, we could make a
+second-order model by adding Rain t−2 as a parent of Rain t , which might give slightly
+more accurate predictions. For example, in Palo Alto, California, it very rarely rains
+more than two days in a row.
+2. Increasing the set of state variables. For example, we could add Season t to allow
+
+570
+
+Chapter 15.
+
+Probabilistic Reasoning over Time
+
+us to incorporate historical records of rainy seasons, or we could add Temperature t ,
+Humidity t and Pressure t (perhaps at a range of locations) to allow us to use a physical
+model of rainy conditions.
+Exercise 15.1 asks you to show that the first solution—increasing the order—can always be
+reformulated as an increase in the set of state variables, keeping the order fixed. Notice that
+adding state variables might improve the system’s predictive power but also increases the
+prediction requirements: we now have to predict the new variables as well. Thus, we are
+looking for a “self-sufficient” set of variables, which really means that we have to understand
+the “physics” of the process being modeled. The requirement for accurate modeling of the
+process is obviously lessened if we can add new sensors (e.g., measurements of temperature
+and pressure) that provide information directly about the new state variables.
+Consider, for example, the problem of tracking a robot wandering randomly on the X–Y
+plane. One might propose that the position and velocity are a sufficient set of state variables:
+one can simply use Newton’s laws to calculate the new position, and the velocity may change
+unpredictably. If the robot is battery-powered, however, then battery exhaustion would tend to
+have a systematic effect on the change in velocity. Because this in turn depends on how much
+power was used by all previous maneuvers, the Markov property is violated. We can restore
+the Markov property by including the charge level Battery t as one of the state variables that
+make up Xt . This helps in predicting the motion of the robot, but in turn requires a model
+for predicting Battery t from Battery t−1 and the velocity. In some cases, that can be done
+reliably, but more often we find that error accumulates over time. In that case, accuracy can
+be improved by adding a new sensor for the battery level.
+
+15.2
+
+I NFERENCE IN T EMPORAL M ODELS
+Having set up the structure of a generic temporal model, we can formulate the basic inference
+tasks that must be solved:
+• Filtering: This is the task of computing the belief state—the posterior distribution
+over the most recent state—given all evidence to date. Filtering2 is also called state
+estimation. In our example, we wish to compute P(Xt | e1:t ). In the umbrella example,
+this would mean computing the probability of rain today, given all the observations of
+the umbrella carrier made so far. Filtering is what a rational agent does to keep track
+of the current state so that rational decisions can be made. It turns out that an almost
+identical calculation provides the likelihood of the evidence sequence, P (e1:t ).
+• Prediction: This is the task of computing the posterior distribution over the future state,
+given all evidence to date. That is, we wish to compute P(Xt+k | e1:t ) for some k > 0.
+In the umbrella example, this might mean computing the probability of rain three days
+from now, given all the observations to date. Prediction is useful for evaluating possible
+courses of action based on their expected outcomes.
+
+FILTERING
+BELIEF STATE
+STATE ESTIMATION
+
+PREDICTION
+
+2
+
+The term “filtering” refers to the roots of this problem in early work on signal processing, where the problem
+is to filter out the noise in a signal by estimating its underlying properties.
+
+Section 15.2.
+
+Inference in Temporal Models
+
+571
+
+• Smoothing: This is the task of computing the posterior distribution over a past state,
+given all evidence up to the present. That is, we wish to compute P(Xk | e1:t ) for some k
+such that 0 ≤ k < t. In the umbrella example, it might mean computing the probability
+that it rained last Wednesday, given all the observations of the umbrella carrier made
+up to today. Smoothing provides a better estimate of the state than was available at the
+time, because it incorporates more evidence. 3
+• Most likely explanation: Given a sequence of observations, we might wish to find the
+sequence of states that is most likely to have generated those observations. That is, we
+wish to compute argmaxx1:t P (x1:t | e1:t ). For example, if the umbrella appears on each
+of the first three days and is absent on the fourth, then the most likely explanation is that
+it rained on the first three days and did not rain on the fourth. Algorithms for this task
+are useful in many applications, including speech recognition—where the aim is to find
+the most likely sequence of words, given a series of sounds—and the reconstruction of
+bit strings transmitted over a noisy channel.
+
+SMOOTHING
+
+In addition to these inference tasks, we also have
+• Learning: The transition and sensor models, if not yet known, can be learned from
+observations. Just as with static Bayesian networks, dynamic Bayes net learning can be
+done as a by-product of inference. Inference provides an estimate of what transitions
+actually occurred and of what states generated the sensor readings, and these estimates
+can be used to update the models. The updated models provide new estimates, and the
+process iterates to convergence. The overall process is an instance of the expectationmaximization or EM algorithm. (See Section 20.3.)
+Note that learning requires smoothing, rather than filtering, because smoothing provides better estimates of the states of the process. Learning with filtering can fail to converge correctly;
+consider, for example, the problem of learning to solve murders: unless you are an eyewitness, smoothing is always required to infer what happened at the murder scene from the
+observable variables.
+The remainder of this section describes generic algorithms for the four inference tasks,
+independent of the particular kind of model employed. Improvements specific to each model
+are described in subsequent sections.
+
+15.2.1 Filtering and prediction
+As we pointed out in Section 7.7.3, a useful filtering algorithm needs to maintain a current
+state estimate and update it, rather than going back over the entire history of percepts for each
+update. (Otherwise, the cost of each update increases as time goes by.) In other words, given
+the result of filtering up to time t, the agent needs to compute the result for t + 1 from the
+new evidence et+1 ,
+P(Xt+1 | e1:t+1 ) = f (et+1 , P(Xt | e1:t )) ,
+RECURSIVE
+ESTIMATION
+
+for some function f . This process is called recursive estimation. We can view the calculation
+3
+
+In particular, when tracking a moving object with inaccurate position observations, smoothing gives a smoother
+estimated trajectory than filtering—hence the name.
+
+572
+
+Chapter 15.
+
+Probabilistic Reasoning over Time
+
+as being composed of two parts: first, the current state distribution is projected forward from
+t to t + 1; then it is updated using the new evidence et+1 . This two-part process emerges quite
+simply when the formula is rearranged:
+P(Xt+1 | e1:t+1 ) = P(Xt+1 | e1:t , et+1 ) (dividing up the evidence)
+= α P(et+1 | Xt+1 , e1:t ) P(Xt+1 | e1:t ) (using Bayes’ rule)
+= α P(et+1 | Xt+1 ) P(Xt+1 | e1:t ) (by the sensor Markov assumption).
+(15.4)
+Here and throughout this chapter, α is a normalizing constant used to make probabilities sum
+up to 1. The second term, P(Xt+1 | e1:t ) represents a one-step prediction of the next state,
+and the first term updates this with the new evidence; notice that P(et+1 | Xt+1 ) is obtainable
+directly from the sensor model. Now we obtain the one-step prediction for the next state by
+conditioning on the current state Xt :
+P(Xt+1 | e1:t+1 ) = α P(et+1 | Xt+1 )
+
+P(Xt+1 | xt , e1:t )P (xt | e1:t )
+xt
+
+= α P(et+1 | Xt+1 )
+
+P(Xt+1 | xt )P (xt | e1:t ) (Markov assumption).
+
+(15.5)
+
+xt
+
+Within the summation, the first factor comes from the transition model and the second comes
+from the current state distribution. Hence, we have the desired recursive formulation. We can
+think of the filtered estimate P(Xt | e1:t ) as a “message” f1:t that is propagated forward along
+the sequence, modified by each transition and updated by each new observation. The process
+is given by
+f1:t+1 = α F ORWARD (f1:t , et+1 ) ,
+where F ORWARD implements the update described in Equation (15.5) and the process begins
+with f1:0 = P(X0 ). When all the state variables are discrete, the time for each update is
+constant (i.e., independent of t), and the space required is also constant. (The constants
+depend, of course, on the size of the state space and the specific type of the temporal model
+in question.) The time and space requirements for updating must be constant if an agent with
+limited memory is to keep track of the current state distribution over an unbounded sequence
+of observations.
+Let us illustrate the filtering process for two steps in the basic umbrella example (Figure 15.2.) That is, we will compute P(R2 | u1:2 ) as follows:
+• On day 0, we have no observations, only the security guard’s prior beliefs; let’s assume
+that consists of P(R0 ) = 0.5, 0.5.
+• On day 1, the umbrella appears, so U1 = true. The prediction from t = 0 to t = 1 is
+P(R1 | r0 )P (r0 )
+
+P(R1 ) =
+r0
+
+= 0.7, 0.3 × 0.5 + 0.3, 0.7 × 0.5 = 0.5, 0.5 .
+Then the update step simply multiplies by the probability of the evidence for t = 1 and
+normalizes, as shown in Equation (15.4):
+P(R1 | u1 ) = α P(u1 | R1 )P(R1 ) = α 0.9, 0.20.5, 0.5
+= α 0.45, 0.1 ≈ 0.818, 0.182 .
+
+Section 15.2.
+
+Inference in Temporal Models
+
+573
+
+• On day 2, the umbrella appears, so U2 = true. The prediction from t = 1 to t = 2 is
+P(R2 | u1 ) =
+
+P(R2 | r1 )P (r1 | u1 )
+r1
+
+= 0.7, 0.3 × 0.818 + 0.3, 0.7 × 0.182 ≈ 0.627, 0.373 ,
+and updating it with the evidence for t = 2 gives
+P(R2 | u1 , u2 ) = α P(u2 | R2 )P(R2 | u1 ) = α 0.9, 0.20.627, 0.373
+= α 0.565, 0.075 ≈ 0.883, 0.117 .
+Intuitively, the probability of rain increases from day 1 to day 2 because rain persists. Exercise 15.2(a) asks you to investigate this tendency further.
+The task of prediction can be seen simply as filtering without the addition of new
+evidence. In fact, the filtering process already incorporates a one-step prediction, and it is
+easy to derive the following recursive computation for predicting the state at t + k + 1 from
+a prediction for t + k:
+P(Xt+k+1 | e1:t ) =
+
+P(Xt+k+1 | xt+k )P (xt+k | e1:t ) .
+
+(15.6)
+
+xt+k
+
+MIXING TIME
+
+Naturally, this computation involves only the transition model and not the sensor model.
+It is interesting to consider what happens as we try to predict further and further into
+the future. As Exercise 15.2(b) shows, the predicted distribution for rain converges to a
+fixed point 0.5, 0.5, after which it remains constant for all time. This is the stationary
+distribution of the Markov process defined by the transition model. (See also page 537.) A
+great deal is known about the properties of such distributions and about the mixing time—
+roughly, the time taken to reach the fixed point. In practical terms, this dooms to failure any
+attempt to predict the actual state for a number of steps that is more than a small fraction of
+the mixing time, unless the stationary distribution itself is strongly peaked in a small area of
+the state space. The more uncertainty there is in the transition model, the shorter will be the
+mixing time and the more the future is obscured.
+In addition to filtering and prediction, we can use a forward recursion to compute the
+likelihood of the evidence sequence, P (e1:t ). This is a useful quantity if we want to compare
+different temporal models that might have produced the same evidence sequence (e.g., two
+different models for the persistence of rain). For this recursion, we use a likelihood message
+1:t (Xt ) = P(Xt , e1:t ). It is a simple exercise to show that the message calculation is identical
+to that for filtering:
+1:t+1 = F ORWARD (1:t , et+1 ) .
+Having computed 1:t , we obtain the actual likelihood by summing out Xt :
+1:t (xt ) .
+
+L1:t = P (e1:t ) =
+
+(15.7)
+
+xt
+
+Notice that the likelihood message represents the probabilities of longer and longer evidence
+sequences as time goes by and so becomes numerically smaller and smaller, leading to underflow problems with floating-point arithmetic. This is an important problem in practice, but
+we shall not go into solutions here.
+
+574
+
+Chapter 15.
+
+X0
+
+Probabilistic Reasoning over Time
+
+X1
+
+Xk
+
+Xt
+
+E1
+
+Ek
+
+Et
+
+Figure 15.3 Smoothing computes P(Xk | e1:t ), the posterior distribution of the state at
+some past time k given a complete sequence of observations from 1 to t.
+
+15.2.2 Smoothing
+As we said earlier, smoothing is the process of computing the distribution over past states
+given evidence up to the present; that is, P(Xk | e1:t ) for 0 ≤ k < t. (See Figure 15.3.)
+In anticipation of another recursive message-passing approach, we can split the computation
+into two parts—the evidence up to k and the evidence from k + 1 to t,
+P(Xk | e1:t ) = P(Xk | e1:k , ek+1:t )
+= α P(Xk | e1:k )P(ek+1:t | Xk , e1:k ) (using Bayes’ rule)
+= α P(Xk | e1:k )P(ek+1:t | Xk )
+
+(using conditional independence)
+
+= α f1:k × bk+1:t .
+
+(15.8)
+
+where “×” represents pointwise multiplication of vectors. Here we have defined a “backward” message bk+1:t = P(ek+1:t | Xk ), analogous to the forward message f1:k . The forward
+message f1:k can be computed by filtering forward from 1 to k, as given by Equation (15.5).
+It turns out that the backward message bk+1:t can be computed by a recursive process that
+runs backward from t:
+P(ek+1:t | Xk ) =
+
+P(ek+1:t | Xk , xk+1 )P(xk+1 | Xk ) (conditioning on Xk+1 )
+xk+1
+
+P (ek+1:t | xk+1 )P(xk+1 | Xk )
+
+=
+
+(by conditional independence)
+
+xk+1
+
+P (ek+1 , ek+2:t | xk+1 )P(xk+1 | Xk )
+
+=
+xk+1
+
+P (ek+1 | xk+1 )P (ek+2:t | xk+1 )P(xk+1 | Xk ) ,
+
+=
+
+(15.9)
+
+xk+1
+
+where the last step follows by the conditional independence of ek+1 and ek+2:t , given Xk+1 .
+Of the three factors in this summation, the first and third are obtained directly from the model,
+and the second is the “recursive call.” Using the message notation, we have
+bk+1:t = BACKWARD(bk+2:t , ek+1 ) ,
+where BACKWARD implements the update described in Equation (15.9). As with the forward
+recursion, the time and space needed for each update are constant and thus independent of t.
+We can now see that the two terms in Equation (15.8) can both be computed by recursions through time, one running forward from 1 to k and using the filtering equation (15.5)
+
+Section 15.2.
+
+Inference in Temporal Models
+
+575
+
+and the other running backward from t to k + 1 and using Equation (15.9). Note that the
+backward phase is initialized with bt+1:t = P(et+1:t | Xt ) = P( | Xt )1, where 1 is a vector of
+1s. (Because et+1:t is an empty sequence, the probability of observing it is 1.)
+Let us now apply this algorithm to the umbrella example, computing the smoothed
+estimate for the probability of rain at time k = 1, given the umbrella observations on days 1
+and 2. From Equation (15.8), this is given by
+P(R1 | u1 , u2 ) = α P(R1 | u1 ) P(u2 | R1 ) .
+
+(15.10)
+
+The first term we already know to be .818, .182, from the forward filtering process described earlier. The second term can be computed by applying the backward recursion in
+Equation (15.9):
+P(u2 | R1 ) =
+
+P (u2 | r2 )P ( | r2 )P(r2 | R1 )
+r2
+
+= (0.9 × 1 × 0.7, 0.3) + (0.2 × 1 × 0.3, 0.7) = 0.69, 0.41 .
+Plugging this into Equation (15.10), we find that the smoothed estimate for rain on day 1 is
+P(R1 | u1 , u2 ) = α 0.818, 0.182 × 0.69, 0.41 ≈ 0.883, 0.117 .
+
+FORWARD–
+BACKWARD
+ALGORITHM
+
+Thus, the smoothed estimate for rain on day 1 is higher than the filtered estimate (0.818) in
+this case. This is because the umbrella on day 2 makes it more likely to have rained on day
+2; in turn, because rain tends to persist, that makes it more likely to have rained on day 1.
+Both the forward and backward recursions take a constant amount of time per step;
+hence, the time complexity of smoothing with respect to evidence e1:t is O(t). This is the
+complexity for smoothing at a particular time step k. If we want to smooth the whole sequence, one obvious method is simply to run the whole smoothing process once for each
+time step to be smoothed. This results in a time complexity of O(t2 ). A better approach
+uses a simple application of dynamic programming to reduce the complexity to O(t). A clue
+appears in the preceding analysis of the umbrella example, where we were able to reuse the
+results of the forward-filtering phase. The key to the linear-time algorithm is to record the
+results of forward filtering over the whole sequence. Then we run the backward recursion
+from t down to 1, computing the smoothed estimate at each step k from the computed backward message bk+1:t and the stored forward message f1:k . The algorithm, aptly called the
+forward–backward algorithm, is shown in Figure 15.4.
+The alert reader will have spotted that the Bayesian network structure shown in Figure 15.3 is a polytree as defined on page 528. This means that a straightforward application
+of the clustering algorithm also yields a linear-time algorithm that computes smoothed estimates for the entire sequence. It is now understood that the forward–backward algorithm
+is in fact a special case of the polytree propagation algorithm used with clustering methods
+(although the two were developed independently).
+The forward–backward algorithm forms the computational backbone for many applications that deal with sequences of noisy observations. As described so far, it has two practical
+drawbacks. The first is that its space complexity can be too high when the state space is large
+and the sequences are long. It uses O(|f|t) space where |f| is the size of the representation of
+the forward message. The space requirement can be reduced to O(|f| log t) with a concomi-
+
+576
+
+FIXED-LAG
+SMOOTHING
+
+Chapter 15.
+
+Probabilistic Reasoning over Time
+
+tant increase in the time complexity by a factor of log t, as shown in Exercise 15.3. In some
+cases (see Section 15.3), a constant-space algorithm can be used.
+The second drawback of the basic algorithm is that it needs to be modified to work
+in an online setting where smoothed estimates must be computed for earlier time slices as
+new observations are continuously added to the end of the sequence. The most common
+requirement is for fixed-lag smoothing, which requires computing the smoothed estimate
+P(Xt−d | e1:t ) for fixed d. That is, smoothing is done for the time slice d steps behind the
+current time t; as t increases, the smoothing has to keep up. Obviously, we can run the
+forward–backward algorithm over the d-step “window” as each new observation is added,
+but this seems inefficient. In Section 15.3, we will see that fixed-lag smoothing can, in some
+cases, be done in constant time per update, independent of the lag d.
+
+15.2.3 Finding the most likely sequence
+Suppose that [true, true, false, true, true] is the umbrella sequence for the security guard’s
+first five days on the job. What is the weather sequence most likely to explain this? Does
+the absence of the umbrella on day 3 mean that it wasn’t raining, or did the director forget
+to bring it? If it didn’t rain on day 3, perhaps (because weather tends to persist) it didn’t
+rain on day 4 either, but the director brought the umbrella just in case. In all, there are 25
+possible weather sequences we could pick. Is there a way to find the most likely one, short of
+enumerating all of them?
+We could try this linear-time procedure: use smoothing to find the posterior distribution
+for the weather at each time step; then construct the sequence, using at each step the weather
+that is most likely according to the posterior. Such an approach should set off alarm bells
+in the reader’s head, because the posterior distributions computed by smoothing are distri-
+
+function F ORWARD -BACKWARD (ev, prior ) returns a vector of probability distributions
+inputs: ev, a vector of evidence values for steps 1, . . . , t
+prior , the prior distribution on the initial state, P(X0 )
+local variables: fv, a vector of forward messages for steps 0, . . . , t
+b, a representation of the backward message, initially all 1s
+sv, a vector of smoothed estimates for steps 1, . . . , t
+fv[0] ← prior
+for i = 1 to t do
+fv[i] ← F ORWARD (fv[i − 1], ev[i])
+for i = t downto 1 do
+sv[i] ← N ORMALIZE(fv[i] × b)
+b ← BACKWARD (b, ev[i])
+return sv
+Figure 15.4 The forward–backward algorithm for smoothing: computing posterior probabilities of a sequence of states given a sequence of observations. The F ORWARD and
+BACKWARD operators are defined by Equations (15.5) and (15.9), respectively.
+
+Section 15.2.
+
+Inference in Temporal Models
+
+577
+
+Rain 1
+
+Rain 2
+
+Rain 3
+
+Rain 4
+
+Rain 5
+
+true
+
+true
+
+true
+
+true
+
+true
+
+false
+
+false
+
+false
+
+false
+
+false
+
+Umbrella t true
+
+true
+
+false
+
+true
+
+true
+
+.8182
+
+.5155
+
+.0361
+
+.0334
+
+.0210
+
+.1818
+
+.0491
+
+.1237
+
+.0173
+
+.0024
+
+m1:1
+
+m1:2
+
+m1:3
+
+m1:4
+
+m1:5
+
+(a)
+
+(b)
+
+Figure 15.5 (a) Possible state sequences for Rain t can be viewed as paths through a graph
+of the possible states at each time step. (States are shown as rectangles to avoid confusion
+with nodes in a Bayes net.) (b) Operation of the Viterbi algorithm for the umbrella observation sequence [true, true, false, true, true]. For each t, we have shown the values of the
+message m1:t , which gives the probability of the best sequence reaching each state at time t.
+Also, for each state, the bold arrow leading into it indicates its best predecessor as measured
+by the product of the preceding sequence probability and the transition probability. Following
+the bold arrows back from the most likely state in m1:5 gives the most likely sequence.
+
+butions over single time steps, whereas to find the most likely sequence we must consider
+joint probabilities over all the time steps. The results can in fact be quite different. (See
+Exercise 15.4.)
+There is a linear-time algorithm for finding the most likely sequence, but it requires a
+little more thought. It relies on the same Markov property that yielded efficient algorithms for
+filtering and smoothing. The easiest way to think about the problem is to view each sequence
+as a path through a graph whose nodes are the possible states at each time step. Such a
+graph is shown for the umbrella world in Figure 15.5(a). Now consider the task of finding
+the most likely path through this graph, where the likelihood of any path is the product of
+the transition probabilities along the path and the probabilities of the given observations at
+each state. Let’s focus in particular on paths that reach the state Rain 5 = true. Because of
+the Markov property, it follows that the most likely path to the state Rain 5 = true consists of
+the most likely path to some state at time 4 followed by a transition to Rain 5 = true; and the
+state at time 4 that will become part of the path to Rain 5 = true is whichever maximizes the
+likelihood of that path. In other words, there is a recursive relationship between most likely
+paths to each state xt+1 and most likely paths to each state xt . We can write this relationship
+as an equation connecting the probabilities of the paths:
+max P(x1 , . . . , xt , Xt+1 | e1:t+1 )
+
+x1 ...xt
+
+
+= α P(et+1 | Xt+1 ) max P(Xt+1 | xt ) max P (x1 , . . . , xt−1 , xt | e1:t ) . (15.11)
+xt
+
+x1 ...xt−1
+
+Equation (15.11) is identical to the filtering equation (15.5) except that
+
+578
+
+Chapter 15.
+
+Probabilistic Reasoning over Time
+
+1. The forward message f1:t = P(Xt | e1:t ) is replaced by the message
+m1:t = max P(x1 , . . . , xt−1 , Xt | e1:t ) ,
+x1 ...xt−1
+
+that is, the probabilities of the most likely path to each state xt ; and
+2. the summation over xt in Equation (15.5) is replaced by the maximization over xt in
+Equation (15.11).
+
+VITERBI ALGORITHM
+
+15.3
+
+HIDDEN MARKOV
+MODEL
+
+Thus, the algorithm for computing the most likely sequence is similar to filtering: it runs forward along the sequence, computing the m message at each time step, using Equation (15.11).
+The progress of this computation is shown in Figure 15.5(b). At the end, it will have the
+probability for the most likely sequence reaching each of the final states. One can thus easily
+select the most likely sequence overall (the states outlined in bold). In order to identify the
+actual sequence, as opposed to just computing its probability, the algorithm will also need to
+record, for each state, the best state that leads to it; these are indicated by the bold arrows in
+Figure 15.5(b). The optimal sequence is identified by following these bold arrows backwards
+from the best final state.
+The algorithm we have just described is called the Viterbi algorithm, after its inventor.
+Like the filtering algorithm, its time complexity is linear in t, the length of the sequence.
+Unlike filtering, which uses constant space, its space requirement is also linear in t. This
+is because the Viterbi algorithm needs to keep the pointers that identify the best sequence
+leading to each state.
+
+H IDDEN M ARKOV M ODELS
+The preceding section developed algorithms for temporal probabilistic reasoning using a general framework that was independent of the specific form of the transition and sensor models.
+In this and the next two sections, we discuss more concrete models and applications that
+illustrate the power of the basic algorithms and in some cases allow further improvements.
+We begin with the hidden Markov model, or HMM. An HMM is a temporal probabilistic model in which the state of the process is described by a single discrete random variable. The possible values of the variable are the possible states of the world. The umbrella
+example described in the preceding section is therefore an HMM, since it has just one state
+variable: Rain t . What happens if you have a model with two or more state variables? You can
+still fit it into the HMM framework by combining the variables into a single “megavariable”
+whose values are all possible tuples of values of the individual state variables. We will see
+that the restricted structure of HMMs allows for a simple and elegant matrix implementation
+of all the basic algorithms.4
+4
+
+The reader unfamiliar with basic operations on vectors and matrices might wish to consult Appendix A before
+proceeding with this section.
+
+Section 15.3.
+
+Hidden Markov Models
+
+579
+
+15.3.1 Simplified matrix algorithms
+With a single, discrete state variable Xt , we can give concrete form to the representations
+of the transition model, the sensor model, and the forward and backward messages. Let the
+state variable Xt have values denoted by integers 1, . . . , S, where S is the number of possible
+states. The transition model P(Xt | Xt−1 ) becomes an S × S matrix T, where
+Tij = P (Xt = j | Xt−1 = i) .
+That is, Tij is the probability of a transition from state i to state j. For example, the transition
+matrix for the umbrella world is
+
+0.7 0.3
+T = P(Xt | Xt−1 ) =
+.
+0.3 0.7
+We also put the sensor model in matrix form. In this case, because the value of the evidence
+variable Et is known at time t (call it et ), we need only specify, for each state, how likely it
+is that the state causes et to appear: we need P (et | Xt = i) for each state i. For mathematical
+convenience we place these values into an S × S diagonal matrix, Ot whose ith diagonal
+entry is P (et | Xt = i) and whose other entries are 0. For example, on day 1 in the umbrella
+world of Figure 15.5, U1 = true, and on day 3, U3 = false, so, from Figure 15.2, we have
+
+
+0.9 0
+0.1 0
+O1 =
+;
+O3 =
+.
+0 0.2
+0 0.8
+Now, if we use column vectors to represent the forward and backward messages, all the computations become simple matrix–vector operations. The forward equation (15.5) becomes
+f1:t+1 = α Ot+1 T f1:t
+
+(15.12)
+
+and the backward equation (15.9) becomes
+bk+1:t = TOk+1 bk+2:t .
+
+(15.13)
+
+From these equations, we can see that the time complexity of the forward–backward algorithm (Figure 15.4) applied to a sequence of length t is O(S 2 t), because each step requires
+multiplying an S-element vector by an S × S matrix. The space requirement is O(St), because the forward pass stores t vectors of size S.
+Besides providing an elegant description of the filtering and smoothing algorithms for
+HMMs, the matrix formulation reveals opportunities for improved algorithms. The first is
+a simple variation on the forward–backward algorithm that allows smoothing to be carried
+out in constant space, independently of the length of the sequence. The idea is that smoothing for any particular time slice k requires the simultaneous presence of both the forward and
+backward messages, f1:k and bk+1:t , according to Equation (15.8). The forward–backward algorithm achieves this by storing the fs computed on the forward pass so that they are available
+during the backward pass. Another way to achieve this is with a single pass that propagates
+both f and b in the same direction. For example, the “forward” message f can be propagated
+backward if we manipulate Equation (15.12) to work in the other direction:
+f1:t = α (T )−1 O−1
+t+1 f1:t+1 .
+The modified smoothing algorithm works by first running the standard forward pass to compute ft:t (forgetting all the intermediate results) and then running the backward pass for both
+
+580
+
+Chapter 15.
+
+Probabilistic Reasoning over Time
+
+function F IXED -L AG -S MOOTHING(et , hmm, d ) returns a distribution over Xt−d
+inputs: et , the current evidence for time step t
+hmm, a hidden Markov model with S × S transition matrix T
+d , the length of the lag for smoothing
+persistent: t , the current time, initially 1
+f, the forward message P(Xt |e1:t ), initially hmm.P RIOR
+B, the d-step backward transformation matrix, initially the identity matrix
+et−d:t , double-ended list of evidence from t − d to t, initially empty
+local variables: Ot−d , Ot , diagonal matrices containing the sensor model information
+add et to the end of et−d:t
+Ot ← diagonal matrix containing P(et |Xt )
+if t > d then
+f ← F ORWARD(f, et )
+remove et−d−1 from the beginning of et−d:t
+Ot−d ← diagonal matrix containing P(et−d |Xt−d )
+−1
+B ← O−1
+BTOt
+t−d T
+else B ← BTOt
+t ←t + 1
+if t > d then return N ORMALIZE(f × B1) else return null
+Figure 15.6 An algorithm for smoothing with a fixed time lag of d steps, implemented
+as an online algorithm that outputs the new smoothed estimate given the observation for a
+new time step. Notice that the final output N ORMALIZE(f × B1) is just α f × b, by Equation (15.14).
+
+b and f together, using them to compute the smoothed estimate at each step. Since only one
+copy of each message is needed, the storage requirements are constant (i.e., independent of
+t, the length of the sequence). There are two significant restrictions on this algorithm: it requires that the transition matrix be invertible and that the sensor model have no zeroes—that
+is, that every observation be possible in every state.
+A second area in which the matrix formulation reveals an improvement is in online
+smoothing with a fixed lag. The fact that smoothing can be done in constant space suggests
+that there should exist an efficient recursive algorithm for online smoothing—that is, an algorithm whose time complexity is independent of the length of the lag. Let us suppose that
+the lag is d; that is, we are smoothing at time slice t − d, where the current time is t. By
+Equation (15.8), we need to compute
+α f1:t−d × bt−d+1:t
+for slice t − d. Then, when a new observation arrives, we need to compute
+α f1:t−d+1 × bt−d+2:t+1
+for slice t − d + 1. How can this be done incrementally? First, we can compute f1:t−d+1 from
+f1:t−d , using the standard filtering process, Equation (15.5).
+
+Section 15.3.
+
+Hidden Markov Models
+
+581
+
+Computing the backward message incrementally is trickier, because there is no simple
+relationship between the old backward message bt−d+1:t and the new backward message
+bt−d+2:t+1 . Instead, we will examine the relationship between the old backward message
+bt−d+1:t and the backward message at the front of the sequence, bt+1:t . To do this, we apply
+Equation (15.13) d times to get
+
+t
+
+bt−d+1:t =
+TOi bt+1:t = Bt−d+1:t 1 ,
+(15.14)
+i = t−d+1
+
+where the matrix Bt−d+1:t is the product of the sequence of T and O matrices. B can be
+thought of as a “transformation operator” that transforms a later backward message into an
+earlier one. A similar equation holds for the new backward messages after the next observation arrives:
+ t+1
+
+bt−d+2:t+1 =
+TOi bt+2:t+1 = Bt−d+2:t+1 1 .
+(15.15)
+i = t−d+2
+
+Examining the product expressions in Equations (15.14) and (15.15), we see that they have a
+simple relationship: to get the second product, “divide” the first product by the first element
+TOt−d+1 , and multiply by the new last element TOt+1 . In matrix language, then, there is a
+simple relationship between the old and new B matrices:
+−1
+Bt−d+2:t+1 = O−1
+t−d+1 T Bt−d+1:t TOt+1 .
+
+(15.16)
+
+This equation provides an incremental update for the B matrix, which in turn (through Equation (15.15)) allows us to compute the new backward message bt−d+2:t+1 . The complete
+algorithm, which requires storing and updating f and B, is shown in Figure 15.6.
+
+15.3.2 Hidden Markov model example: Localization
+On page 145, we introduced a simple form of the localization problem for the vacuum world.
+In that version, the robot had a single nondeterministic Move action and its sensors reported
+perfectly whether or not obstacles lay immediately to the north, south, east, and west; the
+robot’s belief state was the set of possible locations it could be in.
+Here we make the problem slightly more realistic by including a simple probability
+model for the robot’s motion and by allowing for noise in the sensors. The state variable Xt
+represents the location of the robot on the discrete grid; the domain of this variable is the
+set of empty squares {s1 , . . . , sn }. Let N EIGHBORS(s) be the set of empty squares that are
+adjacent to s and let N (s) be the size of that set. Then the transition model for Move action
+says that the robot is equally likely to end up at any neighboring square:
+P (Xt+1 = j | Xt = i) = Tij = (1/N (i) if j ∈ N EIGHBORS (i) else 0) .
+We don’t know where the robot starts, so we will assume a uniform distribution over all the
+squares; that is, P (X0 = i) = 1/n. For the particular environment we consider (Figure 15.7),
+n = 42 and the transition matrix T has 42 × 42 = 1764 entries.
+The sensor variable Et has 16 possible values, each a four-bit sequence giving the presence or absence of an obstacle in a particular compass direction. We will use the notation
+
+582
+
+Chapter 15.
+
+Probabilistic Reasoning over Time
+
+(a) Posterior distribution over robot location after E 1 = N SW
+
+(b) Posterior distribution over robot location after E 1 = N SW, E 2 = N S
+Figure 15.7 Posterior distribution over robot location: (a) one observation E1 = N SW ;
+(b) after a second observation E2 = N S. The size of each disk corresponds to the probability
+that the robot is at that location. The sensor error rate is  = 0.2.
+
+N S, for example, to mean that the north and south sensors report an obstacle and the east and
+west do not. Suppose that each sensor’s error rate is  and that errors occur independently for
+the four sensor directions. In that case, the probability of getting all four bits right is (1 − )4
+and the probability of getting them all wrong is 4 . Furthermore, if dit is the discrepancy—the
+number of bits that are different—between the true values for square i and the actual reading
+et , then the probability that a robot in square i would receive a sensor reading et is
+P (Et = et | Xt = i) = Otii = (1 − )4−dit dit .
+For example, the probability that a square with obstacles to the north and south would produce
+a sensor reading NSE is (1 − )3 1 .
+Given the matrices T and Ot , the robot can use Equation (15.12) to compute the posterior distribution over locations—that is, to work out where it is. Figure 15.7 shows the
+distributions P(X1 | E1 = N SW ) and P(X2 | E1 = N SW, E2 = N S). This is the same maze
+we saw before in Figure 4.18 (page 146), but there we used logical filtering to find the locations that were possible, assuming perfect sensing. Those same locations are still the most
+likely with noisy sensing, but now every location has some nonzero probability.
+In addition to filtering to estimate its current location, the robot can use smoothing
+(Equation (15.13)) to work out where it was at any given past time—for example, where it
+began at time 0—and it can use the Viterbi algorithm to work out the most likely path it has
+
+Hidden Markov Models
+
+6
+5.5
+5
+4.5
+4
+3.5
+3
+2.5
+2
+1.5
+1
+0.5
+
+583
+
+ε = 0.20
+ε = 0.10
+ε = 0.05
+ε = 0.02
+ε = 0.00
+
+0
+
+5
+
+10 15 20 25 30
+Number of observations
+
+(a)
+
+Path accuracy
+
+Localization error
+
+Section 15.3.
+
+35
+
+40
+
+1
+0.9
+0.8
+0.7
+0.6
+0.5
+0.4
+0.3
+0.2
+0.1
+
+ε = 0.00
+ε = 0.02
+ε = 0.05
+ε = 0.10
+ε = 0.20
+
+0
+
+5
+
+10 15 20 25 30
+Number of observations
+
+35
+
+40
+
+(b)
+
+Figure 15.8 Performance of HMM localization as a function of the length of the observation sequence for various different values of the sensor error probability ; data averaged over
+400 runs. (a) The localization error, defined as the Manhattan distance from the true location.
+(b) The Viterbi path accuracy, defined as the fraction of correct states on the Viterbi path.
+
+taken to get where it is now. Figure 15.8 shows the localization error and Viterbi path accuracy
+for various values of the per-bit sensor error rate . Even when  is 20%—which means that
+the overall sensor reading is wrong 59% of the time—the robot is usually able to work out its
+location within two squares after 25 observations. This is because of the algorithm’s ability
+to integrate evidence over time and to take into account the probabilistic constraints imposed
+on the location sequence by the transition model. When  is 10%, the performance after
+a half-dozen observations is hard to distinguish from the performance with perfect sensing.
+Exercise 15.7 asks you to explore how robust the HMM localization algorithm is to errors in
+the prior distribution P(X0 ) and in the transition model itself. Broadly speaking, high levels
+of localization and path accuracy are maintained even in the face of substantial errors in the
+models used.
+The state variable for the example we have considered in this section is a physical
+location in the world. Other problems can, of course, include other aspects of the world.
+Exercise 15.8 asks you to consider a version of the vacuum robot that has the policy of going
+straight for as long as it can; only when it encounters an obstacle does it change to a new
+(randomly selected) heading. To model this robot, each state in the model consists of a
+(location, heading) pair. For the environment in Figure 15.7, which has 42 empty squares,
+this leads to 168 states and a transition matrix with 1682 = 28, 224 entries—still a manageable
+number. If we add the possibility of dirt in the squares, the number of states is multiplied by
+242 and the transition matrix ends up with more than 1029 entries—no longer a manageable
+number; Section 15.5 shows how to use dynamic Bayesian networks to model domains with
+many state variables. If we allow the robot to move continuously rather than in a discrete
+grid, the number of states becomes infinite; the next section shows how to handle this case.
+
+584
+
+15.4
+
+Chapter 15.
+
+K ALMAN F ILTERS
+
+KALMAN FILTERING
+
+MULTIVARIATE
+GAUSSIAN
+
+Probabilistic Reasoning over Time
+
+Imagine watching a small bird flying through dense jungle foliage at dusk: you glimpse
+brief, intermittent flashes of motion; you try hard to guess where the bird is and where it will
+appear next so that you don’t lose it. Or imagine that you are a World War II radar operator
+peering at a faint, wandering blip that appears once every 10 seconds on the screen. Or, going
+back further still, imagine you are Kepler trying to reconstruct the motions of the planets
+from a collection of highly inaccurate angular observations taken at irregular and imprecisely
+measured intervals. In all these cases, you are doing filtering: estimating state variables (here,
+position and velocity) from noisy observations over time. If the variables were discrete, we
+could model the system with a hidden Markov model. This section examines methods for
+handling continuous variables, using an algorithm called Kalman filtering, after one of its
+inventors, Rudolf E. Kalman.
+The bird’s flight might be specified by six continuous variables at each time point; three
+for position (Xt , Yt , Zt ) and three for velocity (Ẋt , Ẏt , Żt ). We will need suitable conditional
+densities to represent the transition and sensor models; as in Chapter 14, we will use linear
+Gaussian distributions. This means that the next state Xt+1 must be a linear function of the
+current state Xt , plus some Gaussian noise, a condition that turns out to be quite reasonable in
+practice. Consider, for example, the X-coordinate of the bird, ignoring the other coordinates
+for now. Let the time interval between observations be Δ, and assume constant velocity
+during the interval; then the position update is given by Xt+Δ = Xt + Ẋ Δ. Adding Gaussian
+noise (to account for wind variation, etc.), we obtain a linear Gaussian transition model:
+P (Xt+Δ = xt+Δ | Xt = xt , Ẋt = ẋt ) = N (xt + ẋt Δ, σ 2 )(xt+Δ ) .
+The Bayesian network structure for a system with position vector Xt and velocity Ẋt is shown
+in Figure 15.9. Note that this is a very specific form of linear Gaussian model; the general
+form will be described later in this section and covers a vast array of applications beyond the
+simple motion examples of the first paragraph. The reader might wish to consult Appendix A
+for some of the mathematical properties of Gaussian distributions; for our immediate purposes, the most important is that a multivariate Gaussian distribution for d variables is
+specified by a d-element mean μ and a d × d covariance matrix Σ.
+
+15.4.1 Updating Gaussian distributions
+In Chapter 14 on page 521, we alluded to a key property of the linear Gaussian family of distributions: it remains closed under the standard Bayesian network operations. Here, we make
+this claim precise in the context of filtering in a temporal probability model. The required
+properties correspond to the two-step filtering calculation in Equation (15.5):
+1. If the current distribution P(Xt | e1:t ) is Gaussian and the transition model P(Xt+1 | xt )
+is linear Gaussian, then the one-step predicted distribution given by
+
+P(Xt+1 | e1:t ) =
+P(Xt+1 | xt )P (xt | e1:t ) dxt
+(15.17)
+xt
+
+is also a Gaussian distribution.
+
+Section 15.4.
+
+Kalman Filters
